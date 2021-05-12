@@ -54,7 +54,7 @@ if __name__ == '__main__':
     current_generation = ''.join(random.choices(possible_letters, k = len(target_generation)))
 
     i = 1
-    while current_generation != target_generation:
+    while get_similarity(current_generation) != 28:
         show_generation(current_generation, i)
 
         current_generation = simulate(current_generation)
