@@ -3,38 +3,44 @@ import string
 
 
 possible_letters = string.ascii_uppercase + ' '
+target_generation = 'METHINKS IT IS LIKE A WEASEL'
 
 
-def get_similarity(next_generation: str, target_generation) -> int:
+def get_similarity(generation: str) -> int:
     similarity = 0
 
-    for index, letter in enumerate(next_generation):
+    for index, letter in enumerate(generation):
         if letter == target_generation[index]: similarity += 1
 
     return similarity
 
 
-def generate_next_generation(current_generation: str, target_generation: str) -> str:
+def mutate(generation: str) -> str:
     chance = 5
-    next_generation = ''
+    mutation = ''
 
-    for index, letter in enumerate(current_generation):
-        next_generation += random.choice(possible_letters) if letter != target_generation[index] and random.randint(1, 100) < chance else letter
+    for index, letter in enumerate(generation):
+        if letter != target_generation[index] and random.randint(1, 100) <= chance:
+            mutation += random.choice(possible_letters)
+        else:
+            mutation += letter
 
-    return next_generation
+    return mutation
 
 
-def simulate(current_generation: str, target_generation: str) -> str:
+def simulate(current_generation: str) -> str:
     max_similarity = -1
     next_generation = ''
 
-    for i in range(100):
-        candidate = generate_next_generation(current_generation, target_generation)
+    generation_copies = [current_generation] * 100
 
-        similarity = get_similarity(candidate, target_generation)
+    for copy in generation_copies:
+        mutation = mutate(copy)
+
+        similarity = get_similarity(mutation)
 
         if similarity > max_similarity:
-            next_generation = candidate
+            next_generation = mutation
             max_similarity = similarity
 
     return next_generation
@@ -45,14 +51,13 @@ def show_generation(generation: str, generation_number: int) -> None:
 
 
 if __name__ == '__main__':
-    target_generation = 'METHINKS IT IS LIKE A WEASEL'
     current_generation = ''.join(random.choices(possible_letters, k = len(target_generation)))
 
     i = 1
     while current_generation != target_generation:
         show_generation(current_generation, i)
 
-        current_generation = simulate(current_generation, target_generation)
+        current_generation = simulate(current_generation)
 
         i += 1
     else:
