@@ -3,6 +3,8 @@ public class Weasel {
     public static final String targetGeneration = "METHINKS IT IS LIKE A WEASEL";
     public static char[] possibleLetters = new char[27];
 
+    public static final int PERFECT_SCORE = 28;
+
     public static void init() {
         for(int i = 65; i < 91; i++) {
             possibleLetters[i - 65] = (char) i;
@@ -37,29 +39,41 @@ public class Weasel {
         return similarity;
     }
 
-    public static String generateNextGeneration(String currentGeneration) {
+    public static String mutate(String generation) {
         final int CHANCE = 5;
-        String nextGeneration = "";
+        String mutation = "";
 
-        for(int i = 0; i < currentGeneration.length(); i++) {
-            int number = new Random().nextInt(100);
-            nextGeneration += (number < CHANCE) ? chooseRandomLetterFrom(possibleLetters) : currentGeneration.charAt(i);
+        for(int i = 0; i < generation.length(); i++) {
+            if(generation.charAt(i) != targetGeneration.charAt(i)) {
+                int number = new Random().nextInt(100);
+
+                mutation += (number < CHANCE) ? chooseRandomLetterFrom(possibleLetters) : generation.charAt(i);
+            }
+            else {
+                mutation += generation.charAt(i);
+            }
         }
 
-        return nextGeneration;
+        return mutation;
     }
 
     public static String simulate(String currentGeneration) {
         String nextGeneration = "";
         int maxSimilarity = -1;
 
-        for(int i = 0; i < 100; i++) {
-            String candidate = generateNextGeneration(currentGeneration);
+        String[] generationCopies = new String[100];
 
-            int similarity = getSimilarity(candidate);
+        for(int i = 0; i < 100; i++) {
+            generationCopies[i] = currentGeneration;
+        }
+
+        for(String copy : generationCopies) {
+            String mutation = mutate(copy);
+
+            int similarity = getSimilarity(mutation);
 
             if(similarity > maxSimilarity) {
-                nextGeneration = candidate;
+                nextGeneration = mutation;
                 maxSimilarity = similarity;
             }
         }
@@ -68,7 +82,7 @@ public class Weasel {
     }
 
     public static void displayGeneration(String generation, int generationNumber) {
-        System.out.println("Generation " + Integer.toString(generationNumber) + ":   " + generation);
+        System.out.printf("Generation %02d:   %s\n", generationNumber, generation);
     }
 
     public static void main(String[] args) {
@@ -77,7 +91,7 @@ public class Weasel {
         String currentGeneration = createInitialGeneration();
 
         int generationNumber = 1;
-        while(!targetGeneration.equals(currentGeneration)) {
+        while(getSimilarity(currentGeneration) != PERFECT_SCORE) {
             displayGeneration(currentGeneration, generationNumber);
 
             currentGeneration = simulate(currentGeneration);
