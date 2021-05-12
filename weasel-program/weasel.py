@@ -1,6 +1,5 @@
 import random
 import string 
-import time
 
 
 possible_letters = string.ascii_uppercase + ' '
@@ -49,7 +48,7 @@ if __name__ == '__main__':
     target_generation = 'METHINKS IT IS LIKE A WEASEL'
     current_generation = ''.join(random.choices(possible_letters, k = len(target_generation)))
 
-    i = 0
+    i = 1
     while current_generation != target_generation:
         show_generation(current_generation, i)
 
