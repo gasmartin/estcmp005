@@ -44,19 +44,6 @@ main:
 
     call _exit
 
-    ;sub ebx, 32
-
-    ;mov ax, 5
-    ;mov cx, 9
-
-    ;div cx
-
-    ;mul ebx
-
-    ;mov [value], ax
-
-    ;mov ebx, [value]
-
 _exit:
     mov eax, 1
     mov ebx, 0
